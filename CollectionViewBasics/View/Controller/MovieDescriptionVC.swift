@@ -187,8 +187,8 @@ class MovieDescriptionVC: UIViewController {
     func setupUI() {
         // MARK: Image
         customImageView2 = UIImageView()
-        customImageView2?.contentMode = .scaleAspectFill
-        customImageView2?.clipsToBounds = true
+//        customImageView2?.contentMode = .scaleAspectFill
+//        customImageView2?.clipsToBounds = true
         customImageView2?.translatesAutoresizingMaskIntoConstraints = false
 
         // MARK: Title
@@ -256,7 +256,7 @@ class MovieDescriptionVC: UIViewController {
             imageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
             imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            imageView.heightAnchor.constraint(equalToConstant: 250),
+            imageView.heightAnchor.constraint(equalToConstant: 350),
 
             // Title
             title.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: spacing),
@@ -294,8 +294,10 @@ class MovieDescriptionVC: UIViewController {
         else { return }
 
         movieTitle2?.text = movieTitle
-        moviePopularityScore2?.text = "Score: \(movieScore)"
-        movieReleaseYear?.text = "Year: \(movieYear)"
+        let decimal = floor(movieScore * 100) / 100
+        moviePopularityScore2?.text = "Score: \(decimal)"
+        let str: String  = String(movieYear.prefix(4))
+        movieReleaseYear?.text = "Year: \(str)"
         movieRating?.text = "Rating: \(movieRate)"
         movieDescription?.text = movieDesc
         customImageView2?.image = UIImage(named: movieImageName)

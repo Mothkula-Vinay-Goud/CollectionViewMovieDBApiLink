@@ -46,6 +46,8 @@ class MovieFirstPageCell: UICollectionViewCell {
         movieReleaseYear?.textAlignment = .center
         movieReleaseYear?.translatesAutoresizingMaskIntoConstraints = false
         customImageView?.translatesAutoresizingMaskIntoConstraints = false
+//        customImageView?.contentMode = .scaleAspectFill
+//        customImageView?.clipsToBounds = true
         movieRating?.textColor = .black
         movieRating?.textAlignment = .center
         movieRating?.translatesAutoresizingMaskIntoConstraints = false
@@ -63,10 +65,8 @@ class MovieFirstPageCell: UICollectionViewCell {
                 customImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
                 customImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
                 customImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-                
-                customImageView.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -contentView.bounds.height * 0.5),
+                customImageView.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -contentView.bounds.height * 0.35),
 
-    
                 movieTitle.topAnchor.constraint(equalTo: customImageView.bottomAnchor, constant: 5),
                 movieTitle.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
                 movieTitle.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
@@ -87,10 +87,11 @@ class MovieFirstPageCell: UICollectionViewCell {
     }
     //adding data to the properties
     func setData(movieModel:MovieModel){
-        movieTitle?.text = "Title: \(movieModel.title ?? "No Title")"
-        moviePopularityScore?.text = "Score : \(movieModel.popularity ?? 0)"
-       movieReleaseYear?.text =   "Year : \(movieModel.release_date ?? "No Year")"
-        movieRating?.text = "Rating : \(movieModel.vote_average ?? 0)"
+        movieTitle?.text = "\(movieModel.title ?? "No Title")"
+        moviePopularityScore?.text = "\(movieModel.popularity ?? 0)"
+        let str: String  = String((movieModel.release_date ?? "YEAR").prefix(4))
+       movieReleaseYear?.text =   "\(str)"
+        movieRating?.text = "\(movieModel.vote_average ?? 0)"
         customImageView?.image = UIImage(named: "\(movieModel.poster_path ?? "No Image")")
         let imagePath = Server.ImageBaseUrl.rawValue + (movieModel.poster_path ?? "")
                 Task {

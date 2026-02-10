@@ -67,7 +67,7 @@ class MovieListVC: UIViewController {
                 let spacing: CGFloat = 10
                 let totalSpacing = (columns - 1) * spacing
                 let width = (objCollectionView.frame.width - totalSpacing) / columns
-                layout.itemSize = CGSize(width: width, height: width + 10)
+                layout.itemSize = CGSize(width: width, height: width + width/2)
             }
         }
     //  MARK: Adding Subviews and Constraints
