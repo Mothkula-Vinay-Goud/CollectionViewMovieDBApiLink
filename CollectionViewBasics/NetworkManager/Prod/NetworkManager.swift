@@ -38,8 +38,6 @@ class NetworkManager: NetworkManagerProtocol {
             print("Log: Error fetching data from server")
             return []
         }
-                
-        
     }
 }
 

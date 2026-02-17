@@ -9,9 +9,11 @@ import XCTest
 @testable import CollectionViewBasics
 
 final class CollectionViewBasicsTests: XCTestCase {
+    var objListViewModel: MovieListViewModel?
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
+        objListViewModel = MovieListViewModel()
     }
 
     override func tearDownWithError() throws {
@@ -32,5 +34,18 @@ final class CollectionViewBasicsTests: XCTestCase {
             // Put the code you want to measure the time of here.
         }
     }
+    @MainActor
+    func testGetDataFromServer() async{
+        await objListViewModel?.getDataFromServer()
+        XCTAssertEqual(objListViewModel?.getMoviesCount(), 0)
+        
+        objListViewModel = MovieListViewModel(service: MockNetworkManager())
+        await objListViewModel?.getDataFromServer()
+        XCTAssertEqual(objListViewModel?.getMoviesCount(), 2)
+        
+        
+        
+    }
+    
 
 }

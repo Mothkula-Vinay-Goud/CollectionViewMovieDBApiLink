@@ -91,9 +91,9 @@ class MovieFirstPageCell: UICollectionViewCell {
         moviePopularityScore?.text = "\(movieModel.popularity ?? 0)"
         let str: String  = String((movieModel.release_date ?? "YEAR").prefix(4))
        movieReleaseYear?.text =   "\(str)"
-        movieRating?.text = "\(movieModel.vote_average ?? 0)"
-        customImageView?.image = UIImage(named: "\(movieModel.poster_path ?? "No Image")")
-        let imagePath = Server.ImageBaseUrl.rawValue + (movieModel.poster_path ?? "")
+        movieRating?.text = "\(movieModel.rating ?? 0)"
+        customImageView?.image = UIImage(named: "\(movieModel.posterpath ?? "No Image")")
+        let imagePath = Server.ImageBaseUrl.rawValue + (movieModel.posterpath ?? "")
                 Task {
                         await customImageView?.loadImage(url: imagePath)
                 }

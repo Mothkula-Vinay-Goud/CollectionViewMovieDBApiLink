@@ -17,8 +17,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         // login vc
+        
+        
         let viewModel = MovieListViewModel(service: NetworkManager())
-        let objMovieListVC = MovieListVC(obj: viewModel)
+        let objMovieListVC = MovieListVC(objMovieListViewModel: viewModel)
         // embed login view controller inside navigation controller
         let objNavigationController = UINavigationController(rootViewController: objMovieListVC)
         

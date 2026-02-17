@@ -29,11 +29,25 @@ class MovieListVC: UIViewController {
         return collectionView
     }()
     
-    var obj : MovieListViewModelProtocol?
+    let activityIndicator: UIActivityIndicatorView = {
+        let activityIndicator = UIActivityIndicatorView(style: .large)
+        activityIndicator.color = .black
+        activityIndicator.hidesWhenStopped = true
+        return activityIndicator
+    }()
     
-    init(obj: MovieListViewModelProtocol?) {
+    let toggleButton: UISwitch = {
+        let toggle = UISwitch()
+        toggle.isOn = true
+        toggle.translatesAutoresizingMaskIntoConstraints = false
+        return toggle
+    }()
+    
+    var objMovieListViewModel : MovieListViewModelProtocol?
+    
+    init(objMovieListViewModel: MovieListViewModelProtocol?) {
         super.init(nibName: nil, bundle: nil)
-        self.obj = obj
+        self.objMovieListViewModel = objMovieListViewModel
     }
 
     required init?(coder: NSCoder) {
@@ -43,19 +57,17 @@ class MovieListVC: UIViewController {
     //  MARK: View LifeCycle Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.title = "Movies"
-        // Do any additional setup after loading the view.
         
-        view.backgroundColor = .white
-        objCollectionView.delegate = self
-        objCollectionView.dataSource = self
-        
+         
+        activityIndicator.center = view.center
+        activityIndicator.startAnimating()
         //load mockdata
         Task{
-            await obj?.getDataFromServer()
+            await objMovieListViewModel?.getDataFromServer()
             objCollectionView.reloadData()
+            activityIndicator.stopAnimating()
         }
-        
+        setUpUI()
         addSubviewsConstraints()
     }
     override func viewDidLayoutSubviews() {
@@ -70,10 +82,32 @@ class MovieListVC: UIViewController {
                 layout.itemSize = CGSize(width: width, height: width + width/2)
             }
         }
+    
+    func setUpUI(){
+        let title = UILabel()
+        title.text = "Movies"
+        title.font = UIFont.boldSystemFont(ofSize: 30)
+        title.textAlignment = .center
+        navigationItem.titleView = title
+        
+        let searchController = UISearchController(searchResultsController: nil)
+        searchController.searchBar.placeholder = "Search Movies"
+        searchController.searchBar.delegate = self
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
+        
+        toggleButton.addTarget(self, action: #selector(toggleChanged(_:)), for: .valueChanged)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: toggleButton)
+        
+        view.backgroundColor = .white
+        objCollectionView.delegate = self
+        objCollectionView.dataSource = self
+    }
     //  MARK: Adding Subviews and Constraints
     func addSubviewsConstraints(){
         
             view.addSubview(objCollectionView)
+            view.addSubview(activityIndicator)
             NSLayoutConstraint.activate([
                 objCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
                 objCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -85,15 +119,14 @@ class MovieListVC: UIViewController {
 }
 //  MARK: Delegate Methods
 //  MARK: DataSouce Methods
-extension MovieListVC: UICollectionViewDataSource, UICollectionViewDelegate {
+extension MovieListVC: UICollectionViewDataSource, UICollectionViewDelegate, UISearchBarDelegate {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         1
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
-            return obj?.getMoviesCount() ?? 0
+            return objMovieListViewModel?.getMoviesCount() ?? 0
         
         
     }
@@ -101,7 +134,7 @@ extension MovieListVC: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if indexPath.section == 0 {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MovieFirstPageCell", for: indexPath) as! MovieFirstPageCell
-            if let movie = obj?.getMovie(indexPath.row) {
+            if let movie = objMovieListViewModel?.getMovie(indexPath.row) {
                 cell.setData(movieModel: movie)
             }
             
@@ -115,7 +148,7 @@ extension MovieListVC: UICollectionViewDataSource, UICollectionViewDelegate {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let selectedMovie = obj?.getMovie(indexPath.row) else{return }
+        guard let selectedMovie = objMovieListViewModel?.getMovie(indexPath.row) else{return }
         let detailVC = MovieDescriptionVC()
     // Send data
         let viewModel = MovieDescriptionViewModel(selectedMovie: selectedMovie)
@@ -123,5 +156,31 @@ extension MovieListVC: UICollectionViewDataSource, UICollectionViewDelegate {
     // Navigate
         self.navigationController?.pushViewController(detailVC, animated: true)
     }
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        objMovieListViewModel?.filteredCountries(searchText: searchText)
+        objCollectionView.reloadData()
+    }
+    //MARK: Toggle for Online/Offline Data
+    @objc func toggleChanged(_ sender: UISwitch) {
+        var service: NetworkManagerProtocol?
+        
+        if sender.isOn {
+            service = NetworkManager()
+        }else{
+            service = MockNetworkManager()
+        }
+        objMovieListViewModel =  MovieListViewModel(service: service)
+        
+        activityIndicator.center = view.center
+        activityIndicator.startAnimating()
+        //load mockdata
+        Task{
+            await objMovieListViewModel?.getDataFromServer()
+            objCollectionView.reloadData()
+            activityIndicator.stopAnimating()
+        }
+    }
+    
+
 }
 

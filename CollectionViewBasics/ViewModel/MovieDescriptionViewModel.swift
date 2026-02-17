@@ -24,10 +24,10 @@ class MovieDescriptionViewModel{
         return selectedMovie?.release_date
     }
     func getImage() -> String? {
-        return selectedMovie?.poster_path
+        return selectedMovie?.posterpath
     }
     func getRating() -> Double?{
-        return selectedMovie?.vote_average
+        return selectedMovie?.rating
     }
     func getDescription() -> String? {
         return selectedMovie?.overview

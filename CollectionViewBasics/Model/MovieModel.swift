@@ -13,6 +13,7 @@ struct MovieResponse: Decodable {
     var results: [MovieModel]?
     var total_pages: Int?
     var total_results: Int?
+    
 }
 
 struct MovieModel: Decodable {
@@ -24,11 +25,28 @@ struct MovieModel: Decodable {
     var original_title: String?
     var overview: String?
     var popularity: Double?
-    var poster_path: String?
+    var posterpath: String?
     var release_date: String?
     var title: String?
     var video: Bool?
-    var vote_average: Double?
+    var rating: Double?
     var vote_count: Int?
+    
+    enum CodingKeys: String, CodingKey {
+            case adult
+            case backdrop_path
+            case genre_ids
+            case id
+            case original_language
+            case original_title
+            case overview
+            case popularity
+            case posterpath = "poster_path"
+            case release_date
+            case title
+            case video
+            case rating = "vote_average"
+            case vote_count
+        }
 }
 
